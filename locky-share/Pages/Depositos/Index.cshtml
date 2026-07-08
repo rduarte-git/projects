@@ -1,0 +1,43 @@
+@page
+@model LockyApp.Pages.Depositos.IndexModel
+
+@{
+    ViewData["Title"] = "Os Meus Depósitos";
+}
+
+<h1>Os Meus Depósitos</h1>
+
+<p>
+    <a asp-page="./Create" class="btn btn-primary">Novo Depósito</a>
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Código</th>
+        <th>Data de Depósito</th>
+        <th>Data de Levantamento</th>
+        <th>Levantado</th>
+        <th>Cacifo</th>
+        <th>Armário</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Depositos)
+    {
+        <tr>
+            <td>@item.CodigoLevantamento</td>
+            <td>@item.DataDeposito</td>
+            <td>@item.DataLevantamento</td>
+            <td>@(item.Levantado ? "Sim" : "Não")</td>
+            <td>
+                @if (item.Cacifo != null)
+                {
+                    @($"Linha {item.Cacifo.Linha}, Coluna {item.Cacifo.Coluna}")
+                }
+            </td>
+            <td>@item.Cacifo?.Armario?.Nome</td>
+        </tr>
+    }
+    </tbody>
+</table>

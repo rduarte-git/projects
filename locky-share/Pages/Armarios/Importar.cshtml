@@ -1,0 +1,25 @@
+@page
+@model LockyApp.Pages.Armarios.ImportarModel
+
+@{
+    ViewData["Title"] = "Importar Armário";
+}
+
+<h1>Importar Armário por JSON</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label class="form-label">Ficheiro JSON</label>
+        <input type="file" name="FicheiroJson" class="form-control" accept=".json" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Importar</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Mensagem))
+{
+    <div class="alert alert-warning mt-3">
+        @Model.Mensagem
+    </div>
+}

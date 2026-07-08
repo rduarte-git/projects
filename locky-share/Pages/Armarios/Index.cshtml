@@ -1,0 +1,49 @@
+@page
+@model LockyApp.Pages.Armarios.IndexModel
+
+@{
+    ViewData["Title"] = "Armários";
+}
+
+<h1>Armários</h1>
+
+<p>
+    <a asp-page="./Create" class="btn btn-primary">Criar novo armário</a>
+    <a asp-page="./Importar" class="btn btn-secondary">Importar JSON</a>
+</p>
+
+@if (Model.Armarios == null || Model.Armarios.Count == 0)
+{
+    <p>Não existem armários registados.</p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Localização</th>
+            <th>Altura</th>
+            <th>Largura</th>
+            <th>Ativo</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var armario in Model.Armarios)
+        {
+            <tr>
+                <td>@armario.Nome</td>
+                <td>@armario.Localizacao</td>
+                <td>@armario.Altura</td>
+                <td>@armario.Largura</td>
+                <td>@(armario.Activo ? "Sim" : "Não")</td>
+                <td>
+                    <a asp-page="./Detalhes" asp-route-id="@armario.Id" class="btn btn-info btn-sm">Detalhes</a>
+                    <a asp-page="./Delete" asp-route-id="@armario.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

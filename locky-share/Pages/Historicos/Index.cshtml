@@ -1,0 +1,48 @@
+@page
+@model LockyApp.Pages.Historicos.IndexModel
+
+@{
+    ViewData["Title"] = "Histórico";
+}
+
+<h1>Histórico</h1>
+
+@if (Model.Historicos.Count == 0)
+{
+    <p>Não existem registos no histórico.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Tipo de Evento</th>
+            <th>Cacifo</th>
+            <th>Depósito</th>
+            <th>Descrição</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Historicos)
+        {
+            <tr>
+                <td>@item.DataEvento</td>
+                <td>@item.TipoEvento</td>
+                <td>
+                    @if (item.Cacifo != null)
+                    {
+                        @item.Cacifo.Armario.Nome
+                    }
+                    else
+                    {
+                        @:-
+                    }
+                </td>
+                <td>@item.DepositoId</td>
+                <td>@item.Descricao</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

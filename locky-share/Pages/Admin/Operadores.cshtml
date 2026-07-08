@@ -1,0 +1,42 @@
+@page
+@model LockyApp.Pages.Admin.OperadoresModel
+
+@{
+    ViewData["Title"] = "Gestão de Operadores";
+}
+
+<h1>Gestão de Operadores</h1>
+
+@if (Model.Operadores.Count == 0)
+{
+    <p>Não existem operadores registados.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Email</th>
+            <th>Ativo</th>
+            <th>Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var operador in Model.Operadores)
+        {
+            <tr>
+                <td>@operador.Email</td>
+                <td>@operador.Ativo</td>
+                <td>
+                    <form method="post" asp-page-handler="ToggleAtivo">
+                        <input type="hidden" name="id" value="@operador.Id" />
+                        <button type="submit" class="btn btn-sm btn-warning">
+                            @(operador.Ativo ? "Desativar" : "Ativar")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

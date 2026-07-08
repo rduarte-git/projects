@@ -1,0 +1,33 @@
+@page
+@model LockyApp.Pages.Depositos.CreateModel
+
+@{
+    ViewData["Title"] = "Criar Depósito";
+}
+
+<h1>Criar Depósito</h1>
+
+<p><strong>Armário:</strong> @Model.Cacifo.Armario.Nome</p>
+<p><strong>Cacifo:</strong> Linha @Model.Cacifo.Linha, Coluna @Model.Cacifo.Coluna</p>
+<p><strong>Estado atual:</strong> @Model.Cacifo.Estado</p>
+
+@if (Model.DepositoCriado)
+{
+    <div class="alert alert-success mt-3">
+        <p><strong>Depósito criado com sucesso.</strong></p>
+        <p><strong>Código de levantamento:</strong> @Model.CodigoGerado</p>
+    </div>
+
+    <a asp-page="/Armarios/Details" asp-route-id="@Model.Cacifo.ArmarioId" class="btn btn-secondary">
+        Voltar ao armário
+    </a>
+}
+else
+{
+    <form method="post">
+        <input type="hidden" name="cacifoId" value="@Model.Cacifo.Id" />
+
+        <button type="submit" class="btn btn-primary">Confirmar depósito</button>
+        <a asp-page="/Armarios/Details" asp-route-id="@Model.Cacifo.ArmarioId" class="btn btn-secondary">Cancelar</a>
+    </form>
+}

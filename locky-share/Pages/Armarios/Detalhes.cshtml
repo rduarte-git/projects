@@ -1,0 +1,71 @@
+@page "{id:int}"
+@model LockyApp.Pages.Armarios.Detalhes
+
+@{
+    ViewData["Title"] = "Detalhes do Armário";
+}
+
+<h1>Detalhes do Armário</h1>
+
+<div>
+    <p><strong>Nome:</strong> @Model.Armario.Nome</p>
+    <p><strong>Localização:</strong> @Model.Armario.Localizacao</p>
+    <p><strong>Altura:</strong> @Model.Armario.Altura</p>
+    <p><strong>Largura:</strong> @Model.Armario.Largura</p>
+    <p><strong>Ativo:</strong> @Model.Armario.Activo</p>
+</div>
+
+<h2>Cacifos</h2>
+
+@if (Model.Armario.Cacifos.Count == 0)
+{
+    <p>Este armário não tem cacifos.</p>
+}
+else
+{
+    <div class="container-fluid p-0">
+        @for (int linha = 1; linha <= Model.Armario.Altura; linha++)
+        {
+            <div class="d-flex mb-2">
+                @for (int coluna = 1; coluna <= Model.Armario.Largura; coluna++)
+                {
+                    var cacifo = Model.Armario.Cacifos
+                        .FirstOrDefault(c => c.Linha == linha && c.Coluna == coluna);
+
+                    var classeEstado = "bg-light";
+
+                    if (cacifo != null)
+                    {
+                        classeEstado = cacifo.Estado == Enums.EstadoCacifo.Livre
+                            ? "bg-success-subtle"
+                            : "bg-danger-subtle";
+                    }
+                    
+                    <div class="border rounded p-3 me-2 text-center @classeEstado" style="width: 120px;">
+                        @if (cacifo != null)
+                        {
+                            <div><strong>@linha,@coluna</strong></div>
+                            <div>@cacifo.Estado</div>
+                            
+                            @if (cacifo.Estado == LockyApp.Enums.EstadoCacifo.Livre)
+                            {
+                                <a asp-page="/Depositos/Create" asp-route-cacifoId="@cacifo.Id" class="btn btn-sm btn-primary mt-2">
+                                    Depositar
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <div><strong>@linha,@coluna</strong></div>
+                            <div>---</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+<p>
+    <a asp-page="./Index" class="btn btn-secondary">Voltar</a>
+</p>

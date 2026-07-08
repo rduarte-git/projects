@@ -1,0 +1,23 @@
+@page "{id:int}"
+@model LockyApp.Pages.Armarios.DeleteModel
+
+@{
+    ViewData["Title"] = "Eliminar Armário";
+}
+
+<h1>Eliminar Armário</h1>
+
+<h3>Tem a certeza que pretende eliminar este armário?</h3>
+
+<div>
+    <p><strong>Nome:</strong> @Model.Armario.Nome</p>
+    <p><strong>Localização:</strong> @Model.Armario.Localizacao</p>
+    <p><strong>Altura:</strong> @Model.Armario.Altura</p>
+    <p><strong>Largura:</strong> @Model.Armario.Largura</p>
+    <p><strong>Ativo:</strong> @Model.Armario.Activo</p>
+</div>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Confirmar eliminação</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+</form>

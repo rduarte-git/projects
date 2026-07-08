@@ -1,0 +1,33 @@
+@page
+@model LockyApp.Pages.Levantamentos.IndexModel
+
+@{
+    ViewData["Title"] = "Levantamento";
+}
+
+<h1>Levantamento por Código</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Codigo" class="form-label">Código de levantamento</label>
+        <input asp-for="Codigo" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Levantar</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Mensagem))
+{
+    if (Model.LevantamentoConcluido)
+    {
+        <div class="alert alert-success mt-3">
+            @Model.Mensagem
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger mt-3">
+            @Model.Mensagem
+        </div>
+    }
+}
