@@ -14,7 +14,6 @@ public class ItemPedido {
         this.produto = produto;
         this.quantidade = quantidade;
         this.opcoes = opcoes;
-        // um produto pronto (agua, bolo) nasce ja pronto; um que precisa de preparacao nasce pendente
         this.pronto = !produto.necessitaPreparacao();
     }
 

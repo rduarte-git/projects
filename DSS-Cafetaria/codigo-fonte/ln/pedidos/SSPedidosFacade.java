@@ -1,13 +1,13 @@
 package ln.pedidos;
 
 import dados.IPedidosDAO;
-import dominio.Pedido;
+import dominio.ComposicaoProduto;
+import dominio.EstadoPedido;
 import dominio.ItemPedido;
+import dominio.OpcaoPersonalizacao;
+import dominio.Pedido;
 import dominio.Produto;
 import dominio.ProdutoPreparado;
-import dominio.ComposicaoProduto;
-import dominio.OpcaoPersonalizacao;
-import dominio.EstadoPedido;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -112,7 +112,6 @@ public class SSPedidosFacade implements IGestPedidos {
         for (Pedido pedido : pedidosDAO.obterTodos()) {
             if (pedido.getEstado() == EstadoPedido.EM_PREPARACAO) {
                 for (ItemPedido item : pedido.itensPorPreparar()) {
-                    // junta o item ao numero do pedido a que pertence
                     itens.add(new ItemFila(pedido.getNumero(), item));
                     estimativa = estimativa + tempoDoItem(item);
                 }
@@ -124,7 +123,6 @@ public class SSPedidosFacade implements IGestPedidos {
     @Override
     public Indicadores consultarIndicadores(LocalDate inicio, LocalDate fim) {
         if (inicio.isAfter(fim)) {
-            // periodo invalido
             return null;
         }
         List<Pedido> doPeriodo = pedidosDAO.obterPorPeriodo(inicio, fim);
@@ -151,10 +149,8 @@ public class SSPedidosFacade implements IGestPedidos {
         return consumo;
     }
 
-    // ---- metodos auxiliares (privados) ----
 
     private int tempoDoItem(ItemPedido item) {
-        // so os produtos que precisam de preparacao tem tempo estimado
         Produto produto = item.getProduto();
         if (produto instanceof ProdutoPreparado) {
             ProdutoPreparado preparado = (ProdutoPreparado) produto;

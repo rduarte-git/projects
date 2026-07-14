@@ -19,33 +19,28 @@ import ln.stock.SSStockFacade;
 public class Main {
 
     public static void main(String[] args) {
-        // 1) camada de dados (em memoria)
         ProdutosDAO produtosDAO = new ProdutosDAO();
         IngredientesDAO ingredientesDAO = new IngredientesDAO();
         PedidosDAO pedidosDAO = new PedidosDAO();
 
-        // 2) dados de exemplo
         popularIngredientes(ingredientesDAO);
         popularCatalogo(produtosDAO, ingredientesDAO);
 
-        // 3) subsistemas (recebem os DAOs por interface)
         SSPedidosFacade ssPedidos = new SSPedidosFacade(pedidosDAO);
         SSCatalogoFacade ssCatalogo = new SSCatalogoFacade(produtosDAO);
         SSStockFacade ssStock = new SSStockFacade(ingredientesDAO);
 
-        // 4) fachada da logica de negocio
         ICafetariaLN cafetaria = new CafetariaFacade(ssPedidos, ssCatalogo, ssStock);
 
-        // 5) interface de utilizador
         CafetariaUI ui = new CafetariaUI(cafetaria);
         ui.run();
     }
 
     private static void popularIngredientes(IngredientesDAO dao) {
-        dao.guardar(new Ingrediente("Cafe", 1000, 200, "g"));
-        dao.guardar(new Ingrediente("Pao", 50, 10, "un"));
-        dao.guardar(new Ingrediente("Manteiga", 500, 100, "g"));
-        dao.guardar(new Ingrediente("Agua", 30, 5, "un"));
+        dao.guardar(new Ingrediente("Cafe", 5, 3, "g"));
+        dao.guardar(new Ingrediente("Pao", 5, 3, "un"));
+        dao.guardar(new Ingrediente("Manteiga", 5, 3, "g"));
+        dao.guardar(new Ingrediente("Agua", 5, 3, "un"));
     }
 
     private static void popularCatalogo(ProdutosDAO dao, IngredientesDAO ingDao) {
@@ -69,7 +64,7 @@ public class Main {
 
     private static Produto criarCafe(IngredientesDAO ingDao) {
         ProdutoPreparado cafe = new ProdutoPreparado("C1", "Cafe", 0.70, 2);
-        cafe.adicionarComposicao(new ComposicaoProduto(ingDao.obter("Cafe"), 7));
+        cafe.adicionarComposicao(new ComposicaoProduto(ingDao.obter("Cafe"), 1));
         Personalizacao intensidade = new Personalizacao("Intensidade");
         intensidade.adicionarOpcao(new OpcaoPersonalizacao("normal", "Normal"));
         intensidade.adicionarOpcao(new OpcaoPersonalizacao("cheio", "Cheio"));
@@ -80,8 +75,8 @@ public class Main {
 
     private static Produto criarTorrada(IngredientesDAO ingDao) {
         ProdutoPreparado torrada = new ProdutoPreparado("T1", "Torrada", 1.20, 4);
-        torrada.adicionarComposicao(new ComposicaoProduto(ingDao.obter("Pao"), 2));
-        torrada.adicionarComposicao(new ComposicaoProduto(ingDao.obter("Manteiga"), 10));
+        torrada.adicionarComposicao(new ComposicaoProduto(ingDao.obter("Pao"), 1));
+        torrada.adicionarComposicao(new ComposicaoProduto(ingDao.obter("Manteiga"), 1));
         Personalizacao tipoPao = new Personalizacao("Tipo de pao");
         tipoPao.adicionarOpcao(new OpcaoPersonalizacao("branco", "Pao branco"));
         tipoPao.adicionarOpcao(new OpcaoPersonalizacao("integral", "Pao integral"));

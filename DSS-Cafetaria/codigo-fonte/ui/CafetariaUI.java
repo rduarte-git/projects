@@ -12,6 +12,7 @@ import ln.pedidos.FilaPreparacao;
 import ln.pedidos.Indicadores;
 import ln.pedidos.ItemFila;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +127,8 @@ public class CafetariaUI {
             return;
         }
         Pedido pedido = cafetaria.confirmarPedido(numero);
-        System.out.println("Pedido " + pedido.getNumero() + " registado. Total: %.2f€" + pedido.getTotal() + " EUR. Estado: " + pedido.getEstado());
+        System.out.println("Pedido " + pedido.getNumero() + " registado. Total: " + pedido.getTotal()
+                + " EUR. Estado: " + pedido.getEstado());
     }
 
     private void adicionarProduto(int numero, String cod) {
@@ -153,20 +155,22 @@ public class CafetariaUI {
     }
 
     private void consultarEstado() {
-        int numPedido = lerInteiro("Numero do pedido: ");
+        int numPedido = lerInteiroOuVazio("Numero do pedido (Enter para listar todos): ");
+        if (numPedido == -1) {
+            if (!mostrarPedidosEmCurso()) {
+                return;
+            }
+            numPedido = lerInteiroOuVazio("Numero do pedido: ");
+            if (numPedido == -1) {
+                return;
+            }
+        }
         Pedido pedido = cafetaria.consultarPedido(numPedido);
         if (pedido == null) {
             System.out.println("Pedido nao encontrado.");
             return;
         }
-        System.out.println("Pedido " + pedido.getNumero() + " - Estado: " + pedido.getEstado());
-        for (ItemPedido item : pedido.getItens()) {
-            String estadoItem = "por preparar";
-            if (item.isPronto()) {
-                estadoItem = "pronto";
-            }
-            System.out.println("  Item " + item.getNumeroItem() + ": " + item.getProduto().getNome() + " (" + estadoItem + ")");
-        }
+        mostrarDetalhePedido(pedido);
     }
 
     private void entregarPedido() {
@@ -179,7 +183,11 @@ public class CafetariaUI {
         for (Pedido p : prontos) {
             System.out.println("  Pedido " + p.getNumero());
         }
-        int numPedido = lerInteiro("Numero do pedido a entregar: ");
+        int numPedido = lerInteiroOuVazio("Numero do pedido a entregar: ");
+        if (numPedido == -1) {
+            System.out.println("Entrega cancelada.");
+            return;
+        }
         Pedido pedido = cafetaria.entregarPedido(numPedido);
         if (pedido == null) {
             System.out.println("Pedido nao encontrado.");
@@ -197,8 +205,25 @@ public class CafetariaUI {
         }
         for (ItemFila linha : fila.getItens()) {
             ItemPedido item = linha.getItem();
-            System.out.println("Pedido " + linha.getNumeroPedido() + " - " + item.getProduto().getNome() + " x" + item.getQuantidade());
+            System.out.println("Pedido " + linha.getNumeroPedido()
+                    + " - Item " + item.getNumeroItem() + ": "
+                    + item.getProduto().getNome() + " x" + item.getQuantidade()
+                    + formatarOpcoes(item.getOpcoes()));
         }
+    }
+
+    private String formatarOpcoes(List<OpcaoPersonalizacao> opcoes) {
+        if (opcoes == null || opcoes.isEmpty()) {
+            return "";
+        }
+        String texto = "";
+        for (OpcaoPersonalizacao op : opcoes) {
+            if (!texto.isEmpty()) {
+                texto = texto + ", ";
+            }
+            texto = texto + op.getDescricao();
+        }
+        return " [" + texto + "]";
     }
 
     private void marcarItemPronto() {
@@ -234,13 +259,13 @@ public class CafetariaUI {
         for (Ingrediente ing : cafetaria.consultarStock()) {
             String aviso = "";
             if (ing.noNivelMinimo()) {
-                aviso = "  <<< NO NIVEL MINIMO";
+                aviso = "  ** NIVEL MINIMO **";
             }
-            System.out.println(ing.getNome() + ": " + ing.getQuantidadeEmStock() + " " + ing.getUnidade() + aviso);
+            System.out.println(ing.getNome() + ": " + ing.getQuantidadeEmStock() + " " + ing.getUnidade()
+                    + " (minimo: " + ing.getNivelMinimo() + " " + ing.getUnidade() + ")" + aviso);
         }
     }
 
-    // ---- auxiliares de apresentacao ----
 
     private void mostrarProdutos() {
         System.out.println("--- Produtos ---");
@@ -260,21 +285,78 @@ public class CafetariaUI {
         }
     }
 
-    // ---- auxiliares de leitura ----
+    private boolean mostrarPedidosEmCurso() {
+        List<Pedido> emCurso = cafetaria.listarPedidosEmCurso();
+        if (emCurso.isEmpty()) {
+            System.out.println("Nao ha pedidos em curso.");
+            return false;
+        }
+        System.out.println("Pedidos em curso:");
+        for (Pedido p : emCurso) {
+            System.out.println("  Pedido " + p.getNumero() + " - " + p.getEstado());
+        }
+        return true;
+    }
+
+    private void mostrarDetalhePedido(Pedido pedido) {
+        System.out.println("Pedido " + pedido.getNumero() + " - Estado: " + pedido.getEstado());
+        for (ItemPedido item : pedido.getItens()) {
+            String estadoItem = "por preparar";
+            if (item.isPronto()) {
+                estadoItem = "pronto";
+            }
+            System.out.println("  Item " + item.getNumeroItem() + ": " + item.getProduto().getNome() + " (" + estadoItem + ")");
+        }
+    }
+
 
     private int lerInteiro(String mensagem) {
+        boolean valido = false;
+        int valor = 0;
+        while (!valido) {
+            System.out.print(mensagem);
+            String linha = scanner.nextLine().trim();
+            try {
+                valor = Integer.parseInt(linha);
+                valido = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Valor invalido. Escreva um numero.");
+            }
+        }
+        return valor;
+    }
+
+    private int lerInteiroOuVazio(String mensagem) {
         System.out.print(mensagem);
-        String linha = scanner.nextLine();
-        return Integer.parseInt(linha);
+        String linha = scanner.nextLine().trim();
+        if (linha.isEmpty()) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(linha);
+        } catch (NumberFormatException e) {
+            System.out.println("Valor invalido.");
+            return -1;
+        }
     }
 
     private String lerTexto(String mensagem) {
         System.out.print(mensagem);
-        return scanner.nextLine();
+        return scanner.nextLine().trim();
     }
 
     private LocalDate lerData(String mensagem) {
-        String linha = lerTexto(mensagem);
-        return LocalDate.parse(linha);
+        boolean valida = false;
+        LocalDate data = null;
+        while (!valida) {
+            String linha = lerTexto(mensagem);
+            try {
+                data = LocalDate.parse(linha);
+                valida = true;
+            } catch (DateTimeParseException e) {
+                System.out.println("Data invalida. Use o formato aaaa-mm-dd.");
+            }
+        }
+        return data;
     }
 }

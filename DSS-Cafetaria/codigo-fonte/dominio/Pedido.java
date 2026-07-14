@@ -47,7 +47,6 @@ public class Pedido {
         return total;
     }
 
-    // usado na confirmacao do registo: fica PRONTO se todos os itens ja estao prontos, senao EM_PREPARACAO
     public void confirmar() {
         if (estaPronto()) {
             estado = EstadoPedido.PRONTO;
@@ -78,8 +77,6 @@ public class Pedido {
         }
         return pendentes;
     }
-
-    // ---- metodos auxiliares (privados) ----
 
     private ItemPedido getItem(int numeroItem) {
         for (ItemPedido item : itens) {

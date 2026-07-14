@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class PedidosDAO implements IPedidosDAO {
-    // LinkedHashMap mantem a ordem de insercao (= ordem de registo dos pedidos)
     private Map<Integer, Pedido> pedidos;
 
     public PedidosDAO() {
@@ -45,7 +44,6 @@ public class PedidosDAO implements IPedidosDAO {
         List<Pedido> resultado = new ArrayList<>();
         for (Pedido pedido : pedidos.values()) {
             LocalDate data = pedido.getDataHora().toLocalDate();
-            // fica se a data estiver entre inicio e fim (inclusive)
             if (!data.isBefore(inicio) && !data.isAfter(fim)) {
                 resultado.add(pedido);
             }

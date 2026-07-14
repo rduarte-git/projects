@@ -2,7 +2,6 @@ package ln.pedidos;
 
 import dominio.ItemPedido;
 
-// linha da fila de preparacao: junta o item ao numero do pedido a que pertence
 public class ItemFila {
     private int numeroPedido;
     private ItemPedido item;

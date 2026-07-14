@@ -46,9 +46,5 @@ public abstract class Produto {
         composicao.add(linha);
     }
 
-    /* public boolean admitePersonalizacoes() {
-        return !personalizacoes.isEmpty();
-    } */
-
     public abstract boolean necessitaPreparacao();
 }
